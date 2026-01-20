@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Language Learning App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #eef2ff;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #1f2937;
+  }
+  h2 {
+    color: #374151;
+  }
+  .card, .quiz {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .word {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  button {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 5px;
+  }
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .score {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🌍 Language Learning App</h1>
+
+  <!-- Vocabulary -->
+  <h2>📚 Vocabulary</h2>
+  <div id="vocab"></div>
+
+  <!-- Quiz -->
+  <h2>📝 Quiz</h2>
+  <div class="quiz">
+    <p id="question"></p>
+    <input type="text" id="userAnswer" placeholder="Type your answer here">
+    <button onclick="checkAnswer()">Check Answer</button>
+    <p id="result"></p>
+  </div>
+
+  <div class="score">Score: <span id="score">0</span></div>
+</div>
+
+<script>
+  const data = [
+    { english: "Hello", spanish: "Hola" },
+    { english: "Thank You", spanish: "Gracias" },
+    { english: "Good Morning", spanish: "Buenos Días" },
+    { english: "Good Night", spanish: "Buenas Noches" }
+  ];
+
+  let score = 0;
+  let index = 0;
+
+  const vocabDiv = document.getElementById("vocab");
+  const question = document.getElementById("question");
+  const userAnswer = document.getElementById("userAnswer");
+  const result = document.getElementById("result");
+  const scoreText = document.getElementById("score");
+
+  // Show Vocabulary
+  data.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <div class="word">${item.english}</div>
+      <div>${item.spanish}</div>
+      <button onclick="speak('${item.english}')">🔊 Pronounce</button>
+    `;
+    vocabDiv.appendChild(div);
+  });
+
+  // Text to Speech
+  function speak(text) {
+    const speech = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(speech);
+  }
+
+  // Quiz
+  function loadQuestion() {
+    question.innerText = `Meaning of "${data[index].english}" ?`;
+    userAnswer.value = "";
+    result.innerText = "";
+  }
+
+  function checkAnswer() {
+    const correct = data[index].spanish.toLowerCase();
+    const user = userAnswer.value.toLowerCase();
+
+    if (user === correct) {
+      result.innerText = "✅ Correct Answer!";
+      result.style.color = "green";
+      score++;
+      scoreText.innerText = score;
+    } else {
+      result.innerText = "❌ Wrong! Correct Answer: " + data[index].spanish;
+      result.style.color = "red";
+    }
+
+    index = (index + 1) % data.length;
+    setTimeout(loadQuestion, 1500);
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
