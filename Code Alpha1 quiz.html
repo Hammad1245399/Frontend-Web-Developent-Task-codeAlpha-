@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flashcard Quiz App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .app {
+        background: white;
+        width: 400px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .card {
+        border: 2px solid #0a66c2;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        min-height: 100px;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    button {
+        padding: 8px 12px;
+        margin: 4px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .primary {
+        background: #0a66c2;
+        color: white;
+    }
+
+    .danger {
+        background: #d9534f;
+        color: white;
+    }
+
+    .secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .controls {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 6px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .form {
+        margin-top: 10px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="app">
+    <h2>📘 Flashcard Quiz App</h2>
+
+    <div class="card" id="cardText">
+        Question will appear here
+    </div>
+
+    <div class="controls">
+        <button class="primary" onclick="showAnswer()">Show Answer</button><br>
+        <button class="secondary" onclick="prevCard()">Previous</button>
+        <button class="secondary" onclick="nextCard()">Next</button><br>
+        <button class="danger" onclick="deleteCard()">Delete</button>
+        <button class="primary" onclick="editCard()">Edit</button>
+    </div>
+
+    <div class="form">
+        <h3>Add New Card</h3>
+        <input type="text" id="newQuestion" placeholder="Enter question">
+        <textarea id="newAnswer" placeholder="Enter answer"></textarea>
+        <button class="primary" onclick="addCard()">Add Card</button>
+    </div>
+</div>
+
+<script>
+    let flashcards = [
+        { question: "What is HTML?", answer: "HTML stands for HyperText Markup Language." },
+        { question: "What is CSS?", answer: "CSS is used to style web pages." },
+        { question: "What is JavaScript?", answer: "JavaScript adds interactivity to websites." }
+    ];
+
+    let currentIndex = 0;
+    let showingAnswer = false;
+
+    const cardText = document.getElementById("cardText");
+
+    function displayCard() {
+        showingAnswer = false;
+        cardText.innerText = flashcards[currentIndex].question;
+    }
+
+    function showAnswer() {
+        if (!showingAnswer) {
+            cardText.innerText = flashcards[currentIndex].answer;
+            showingAnswer = true;
+        } else {
+            displayCard();
+        }
+    }
+
+    function nextCard() {
+        if (currentIndex < flashcards.length - 1) {
+            currentIndex++;
+            displayCard();
+        }
+    }
+
+    function prevCard() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            displayCard();
+        }
+    }
+
+    function addCard() {
+        const q = document.getElementById("newQuestion").value;
+        const a = document.getElementById("newAnswer").value;
+
+        if (q === "" || a === "") {
+            alert("Please enter both question and answer");
+            return;
+        }
+
+        flashcards.push({ question: q, answer: a });
+        document.getElementById("newQuestion").value = "";
+        document.getElementById("newAnswer").value = "";
+        currentIndex = flashcards.length - 1;
+        displayCard();
+    }
+
+    function deleteCard() {
+        if (flashcards.length === 0) return;
+        flashcards.splice(currentIndex, 1);
+        if (currentIndex > 0) currentIndex--;
+        if (flashcards.length === 0) {
+            cardText.innerText = "No flashcards available";
+        } else {
+            displayCard();
+        }
+    }
+
+    function editCard() {
+        let newQ = prompt("Edit Question:", flashcards[currentIndex].question);
+        let newA = prompt("Edit Answer:", flashcards[currentIndex].answer);
+
+        if (newQ && newA) {
+            flashcards[currentIndex].question = newQ;
+            flashcards[currentIndex].answer = newA;
+            displayCard();
+        }
+    }
+
+    displayCard();
+</script>
+
+</body>
+</html>
