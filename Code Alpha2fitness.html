@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fitness Tracker App</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .container {
+        width: 420px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #0a66c2;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    .summary {
+        margin-top: 15px;
+    }
+
+    .card {
+        background: #f1f3f5;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+
+    .progress-bar {
+        background: #ddd;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 10px;
+        margin-top: 5px;
+    }
+
+    .progress {
+        height: 10px;
+        background: #28a745;
+        width: 0%;
+    }
+
+    .log {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🏋️ Fitness Tracker</h2>
+
+    <input type="number" id="steps" placeholder="Steps walked">
+    <select id="workout">
+        <option value="">Select Workout</option>
+        <option>Walking</option>
+        <option>Running</option>
+        <option>Gym</option>
+        <option>Yoga</option>
+        <option>Cycling</option>
+    </select>
+    <input type="number" id="calories" placeholder="Calories Burned">
+
+    <button onclick="addData()">Add Activity</button>
+
+    <div class="summary">
+        <h3>📊 Daily Summary</h3>
+
+        <div class="card">
+            Steps: <span id="totalSteps">0</span>
+            <div class="progress-bar">
+                <div class="progress" id="stepsBar"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            Calories: <span id="totalCalories">0</span>
+            <div class="progress-bar">
+                <div class="progress" id="caloriesBar"></div>
+            </div>
+        </div>
+
+        <div class="log" id="activityLog"></div>
+    </div>
+</div>
+
+<script>
+    let data = JSON.parse(localStorage.getItem("fitnessData")) || [];
+
+    function addData() {
+        const steps = document.getElementById("steps").value;
+        const workout = document.getElementById("workout").value;
+        const calories = document.getElementById("calories").value;
+
+        if (!steps && !calories) {
+            alert("Please enter fitness data");
+            return;
+        }
+
+        const entry = {
+            steps: Number(steps),
+            workout: workout,
+            calories: Number(calories),
+            date: new Date().toLocaleDateString()
+        };
+
+        data.push(entry);
+        localStorage.setItem("fitnessData", JSON.stringify(data));
+
+        document.getElementById("steps").value = "";
+        document.getElementById("calories").value = "";
+        document.getElementById("workout").value = "";
+
+        updateDashboard();
+    }
+    function updateDashboard() {
+        let totalSteps = 0;
+        let totalCalories = 0;
+        let logHTML = "";
+        data.forEach(item => {
+            totalSteps += item.steps;
+            totalCalories += item.calories;
+            logHTML += `• ${item.workout || "Activity"} - ${item.calories} cal<br>`;
+        });
+
+        document.getElementById("totalSteps").innerText = totalSteps;
+        document.getElementById("totalCalories").innerText = totalCalories;
+        document.getElementById("stepsBar").style.width = Math.min(totalSteps / 10000 * 100, 100) + "%";
+        document.getElementById("caloriesBar").style.width = Math.min(totalCalories / 2000 * 100, 100) + "%";
+        document.getElementById("activityLog").innerHTML = logHTML;
+    }
+
+    updateDashboard();
+</script>
+
+</body>
+</html>
